@@ -36,7 +36,7 @@ namespace DogGo.Repositories
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    List<Walker> walkers = new List<Walker>();
+                    List<Owner> owners = new List<Owner>();
                     while (reader.Read())
                     {
                         Owner owner = new Owner
@@ -49,12 +49,12 @@ namespace DogGo.Repositories
                             Phone = reader.GetString(reader.GetOrdinal("Phone"))
                         };
 
-                        GetAllOwners().Add(owner);
+                        owners.Add(owner);
                     }
 
                     reader.Close();
 
-                    return GetAllOwners();
+                    return owners;
                 }
             }
         }
