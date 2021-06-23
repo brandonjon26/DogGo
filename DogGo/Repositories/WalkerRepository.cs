@@ -31,8 +31,9 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], ImageUrl, NeighborhoodId
-                        FROM Walker
+                        SELECT w.Id, w.[Name], w.ImageUrl, w.NeighborhoodId, n.Name AS Neighborhood
+                        FROM Walker w
+                        JOIN Neighborhood n ON w.NeighborhoodId = n.Id
                     ";
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -40,6 +41,10 @@ namespace DogGo.Repositories
                     List<Walker> walkers = new List<Walker>();
                     while (reader.Read())
                     {
+                        Neighborhood neighborhood = new Neighborhood
+                        {
+                            Name = reader.GetString(reader.GetOrdinal("Neighborhood")),
+                        };
                         Walker walker = new Walker
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
@@ -66,9 +71,10 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], ImageUrl, NeighborhoodId
-                        FROM Walker
-                        WHERE Id = @id
+                        SELECT w.Id, w.[Name], w.ImageUrl, w.NeighborhoodId, n.Name AS Neighborhood
+                        FROM Walker w
+                        JOIN Neighborhood n ON w.NeighborhoodId = n.Id
+                        WHERE w.Id = @id
                     ";
 
                     cmd.Parameters.AddWithValue("@id", id);
@@ -77,12 +83,17 @@ namespace DogGo.Repositories
 
                     if (reader.Read())
                     {
+                        Neighborhood neighborhood = new Neighborhood
+                        {
+                            Name = reader.GetString(reader.GetOrdinal("Neighborhood")),
+                        };
                         Walker walker = new Walker
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             ImageUrl = reader.GetString(reader.GetOrdinal("ImageUrl")),
-                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId"))
+                            NeighborhoodId = reader.GetInt32(reader.GetOrdinal("NeighborhoodId")),
+                            Neighborhood = neighborhood
                         };
 
                         reader.Close();
