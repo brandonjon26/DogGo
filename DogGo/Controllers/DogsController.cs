@@ -24,5 +24,28 @@ namespace DogGo.Controllers
 
             return View(dogs);
         }
+
+        // GET: Dogs/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Dogs/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Dog dog)
+        {
+            try
+            {
+                _dogRepo.AddDog(dog);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(dog);
+            }
+        }
     }
 }
