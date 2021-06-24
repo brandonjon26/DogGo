@@ -1,6 +1,7 @@
 ﻿using DogGo.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 
 namespace DogGo.Repositories
@@ -66,15 +67,30 @@ namespace DogGo.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT d.Id, d.Name, d.OwnerId, d.Breed, d.Notes, d.ImageUrl
-                        FROM Dog d
+                        INSERT INTO Dog ([Name], OwnerId, Breed, Notes, ImageUrl)
+                        OUTPUT INSERTED.ID
+                        VALUES (@name, @ownerid, @breed, @notes, @imageurl);
                     ";
 
                     cmd.Parameters.AddWithValue("@name", dog.Name);
                     cmd.Parameters.AddWithValue("@ownerId", dog.OwnerId);
-                    cmd.Parameters.AddWithValue("@phoneNumber", dog.Breed);
-                    cmd.Parameters.AddWithValue("@address", dog.Notes);
-                    cmd.Parameters.AddWithValue("@neighborhoodId", dog.ImageUrl);
+                    cmd.Parameters.AddWithValue("@breed", dog.Breed);
+                    if (dog.Notes == null)
+                    {
+                        cmd.Parameters.AddWithValue("@notes", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@notes", dog.Notes);
+                    }
+                    if (dog.ImageUrl == null)
+                    {
+                        cmd.Parameters.AddWithValue("@imageurl", DBNull.Value);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@imageurl", dog.ImageUrl);
+                    }
 
                     int id = (int)cmd.ExecuteScalar();
 
