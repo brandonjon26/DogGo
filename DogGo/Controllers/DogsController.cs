@@ -87,6 +87,31 @@ namespace DogGo.Controllers
             }
         }
 
+        //GET: Dogs/Delete
+        public ActionResult Delete(int id)
+        {
+            Dog dog = _dogRepo.GetDogById(id);
+
+            return View(dog);
+        }
+
+        //POST: Dogs/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Dog dog)
+        {
+            try
+            {
+                _dogRepo.DeleteDog(id);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(dog);
+            }
+        }
+
         private int GetCurrentUserId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
